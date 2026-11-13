@@ -8,7 +8,7 @@
         <field name="inherit_id" ref="hr.view_employee_form"/>
         <field name="arch" type="xml">
             <field name="identification_id" position="after">
-                <field name="payroll_pdf_password" password="True"/>
+                <field name="payroll_pdf_password" password="True" groups="hr.group_hr_user"/>
             </field>
         </field>
     </record>

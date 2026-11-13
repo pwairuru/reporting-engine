@@ -8,6 +8,7 @@ class HrEmployee(models.Model):
 
     payroll_pdf_password = fields.Char(
         string="Payroll PDF password",
+        groups="hr.group_hr_user",
         help="Optional per-employee override for encrypted payslip and P9 "
         "PDFs. Leave empty to use the employee's national ID "
         "(identification number) instead.",

@@ -8,6 +8,7 @@ through pypdf, no wkhtmltopdf needed), and the email/portal key hint.
 """
 from io import BytesIO
 
+from odoo.exceptions import AccessError
 from odoo.tests.common import TransactionCase
 from odoo.tools.pdf import PdfReader, PdfWriter
 
@@ -32,6 +33,15 @@ class TestKePayrollEncrypt(TransactionCase):
         )
         cls.employee = cls.env["hr.employee"].create(
             {"name": "Encrypt Test", "identification_id": "NAT123"}
+        )
+        cls.restricted = cls.env["res.users"].create(
+            {
+                "name": "Restricted Sender",
+                "login": "restricted_sender",
+                "group_ids": [
+                    (6, 0, [cls.env.ref("base.group_user").id])
+                ],
+            }
         )
 
     def _payslip(self):
@@ -102,6 +112,23 @@ class TestKePayrollEncrypt(TransactionCase):
         self.assertTrue(reader.is_encrypted)
         self.assertNotEqual(reader.decrypt("secret"), 0)
         self.assertEqual(len(reader.pages), 1)
+
+    def test_restricted_sender_still_gets_password(self):
+        """A sender without HR read rights (e.g. personal account) can
+        still trigger encryption; the password resolves server-side."""
+        self.assertEqual(
+            self.payslip_report.with_user(self.restricted)
+            ._get_pdf_password([self._payslip().id]),
+            "NAT123",
+        )
+
+    def test_password_field_stays_private(self):
+        """Direct reads of the override stay blocked for restricted
+        users: the fix must not leak the key."""
+        with self.assertRaises(AccessError):
+            self.employee.with_user(self.restricted).read(
+                ["payroll_pdf_password"]
+            )
 
     def test_payslip_pdf_renders_encrypted(self):
         """Full render of a real payslip carries the encryption marker."""
