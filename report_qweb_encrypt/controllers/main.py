@@ -2,12 +2,21 @@
 # Copyright 2020 Ecosoft Co., Ltd.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 import json
-
-from werkzeug.urls import url_decode
+from urllib.parse import parse_qsl
 
 from odoo.http import request, route
 
 from odoo.addons.web.controllers.report import ReportController
+
+
+def _password_from_context(context):
+    """Extract encrypt_password from a JSON-encoded context string."""
+    if not context:
+        return False
+    try:
+        return json.loads(context).get("encrypt_password", False)
+    except (ValueError, AttributeError):
+        return False
 
 
 class ReportControllerEncrypt(ReportController):
@@ -23,13 +32,15 @@ class ReportControllerEncrypt(ReportController):
             return result
         request_content = json.loads(data)
         url, ttype = request_content[0], request_content[1]
-        if ttype != "qweb-pdf" or "?" not in url:
+        if ttype != "qweb-pdf":
             return result
-        args = dict(
-            url_decode(url.split("?", 1)[1])
-        )  # decoding the args represented in JSON
-        data_context = json.loads(args.get("context", "{}"))
-        encrypt_password = data_context.get("encrypt_password")
+        # Odoo 20 posts the user context separately and may also embed it
+        # in the report URL query string (wizard reports). Check both.
+        encrypt_password = _password_from_context(context)
+        if not encrypt_password and "?" in url:
+            # decoding the args represented in JSON
+            args = dict(parse_qsl(url.split("?", 1)[1]))
+            encrypt_password = _password_from_context(args.get("context"))
         if not encrypt_password:
             return result
         encrypted_data = request.env["ir.actions.report"]._encrypt_pdf(

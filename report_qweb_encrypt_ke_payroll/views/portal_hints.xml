@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Esidai / Hoteli
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <template id="portal_my_payslip_detail_encrypt_hint"
+              inherit_id="hr_payroll_community.portal_my_payslip_detail"
+              name="Payslip Detail encryption hint">
+        <xpath expr="//a[hasclass('btn-primary')]" position="after">
+            <p class="text-muted mt-2">The PDF is password-protected. Open it
+            with your <strong>national ID number</strong> (or your payroll PDF
+            password, if HR set one for you).</p>
+        </xpath>
+    </template>
+
+    <template id="portal_my_p9_list_encrypt_hint"
+              inherit_id="l10n_ke_hr_payroll_community.portal_my_p9_list"
+              name="P9 list encryption hint">
+        <xpath expr="//ul" position="before">
+            <p class="text-muted">P9 PDFs are password-protected. Open them
+            with your <strong>national ID number</strong> (or your payroll PDF
+            password, if HR set one for you).</p>
+        </xpath>
+    </template>
+</odoo>

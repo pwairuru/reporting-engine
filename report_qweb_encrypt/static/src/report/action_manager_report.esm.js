@@ -1,10 +1,8 @@
 import {Dialog} from "@web/core/dialog/dialog";
 import {download} from "@web/core/network/download";
 import {registry} from "@web/core/registry";
-import {useRef} from "@odoo/owl";
+import {Component, useRef} from "@odoo/owl";
 import {user} from "@web/core/user";
-
-const {Component} = owl;
 
 function buildReportUrl(action, type, userContext) {
     let url = `/report/${type}/${action.report_name}`;

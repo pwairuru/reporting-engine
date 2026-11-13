@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Esidai / Hoteli
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <!-- Install-time defaults only (noupdate): admins can change or disable
+         encryption per report afterwards via Settings > Technical > Reports.
+         The generic report_qweb_encrypt module stays usable on any other
+         QWeb PDF report; only these two employee reports are pre-locked. -->
+    <data noupdate="1">
+        <!-- Payslip PDF: encrypted by default, password = per-employee
+             override, else national ID. -->
+        <record id="hr_payroll_community.hr_payslip_report_action"
+                model="ir.actions.report">
+            <field name="encrypt">auto</field>
+            <field name="encrypt_password">(object.employee_id.payroll_pdf_password or object.employee_id.identification_id or '')</field>
+        </record>
+        <!-- Individual P9 card: same scheme. The all-employees P9 summary has
+             no single employee, so it is intentionally left unencrypted. -->
+        <record id="l10n_ke_hr_payroll_community.action_ke_p9_individual_report"
+                model="ir.actions.report">
+            <field name="encrypt">auto</field>
+            <field name="encrypt_password">(object.employee_id.payroll_pdf_password or object.employee_id.identification_id or '')</field>
+        </record>
+        <!-- Payslip email: tell the employee which key opens the PDF. -->
+        <record id="hr_payroll_community.email_template_payslip"
+                model="mail.template">
+            <field name="body_html"><![CDATA[
+                    <p>Hi,</p>
+                    <p>Here by attaching payslip details of this month.</p>
+                    <p>The attached PDF is password-protected. Open it with
+                    your <strong>national ID number</strong> (or the payroll
+                    PDF password HR set on your employee record, if any).</p>
+                    ]]></field>
+        </record>
+    </data>
+</odoo>

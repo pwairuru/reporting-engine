@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Esidai / Hoteli
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record id="view_employee_form_payroll_pdf_password" model="ir.ui.view">
+        <field name="name">hr.employee.form.payroll.pdf.password</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <field name="identification_id" position="after">
+                <field name="payroll_pdf_password" password="True"/>
+            </field>
+        </field>
+    </record>
+</odoo>
