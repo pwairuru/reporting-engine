@@ -1,5 +1,5 @@
 KE Payroll PDF Encryption Defaults
-==============================
+====================================
 
 Encrypts employee payslip and individual P9 PDFs by default, using the
 generic ``report_qweb_encrypt`` mechanism (any other QWeb PDF report can be

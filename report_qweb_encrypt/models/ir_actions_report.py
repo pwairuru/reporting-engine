@@ -74,7 +74,7 @@ class IrActionsReport(models.Model):
         output_pdf = PdfWriter()
         in_buff = BytesIO(data)
         pdf = PdfReader(in_buff)
-        output_pdf.appendPagesFromReader(pdf)
+        output_pdf.append(pdf)
         output_pdf.encrypt(password)
         buff = BytesIO()
         output_pdf.write(buff)

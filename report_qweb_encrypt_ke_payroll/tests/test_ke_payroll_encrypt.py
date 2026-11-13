@@ -103,6 +103,15 @@ class TestKePayrollEncrypt(TransactionCase):
         self.assertNotEqual(reader.decrypt("secret"), 0)
         self.assertEqual(len(reader.pages), 1)
 
+    def test_payslip_pdf_renders_encrypted(self):
+        """Full render of a real payslip carries the encryption marker."""
+        pdf, _ = self.payslip_report.with_context(
+            force_report_rendering=True
+        )._render_qweb_pdf(
+            self.payslip_report.report_name, [self._payslip().id]
+        )
+        self.assertIn(b"/Encrypt", pdf)
+
     def test_mail_template_tells_employee_the_key(self):
         template = self.env.ref("hr_payroll_community.email_template_payslip")
         self.assertIn("national ID", template.body_html)
